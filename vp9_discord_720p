@@ -1,0 +1,14 @@
+#!/bin/bash
+input_file="$@"
+output_file="${input_file%.*}.10MiB.webm"
+
+DURATION=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$input_file")
+
+BITRATE=$(echo "75000 / $DURATION" | bc)
+
+VIDEO_BITRATE="$(echo "$BITRATE - 96" | bc)k"
+
+PRESET=veryslow
+
+ffmpeg -i "$input_file" -vf scale=1280:720 -c:v libvpx-vp9 -b:v $VIDEO_BITRATE -pass 1 -an -f null /dev/null && \
+ffmpeg -i "$input_file" -vf scale=1280:720 -c:v libvpx-vp9 -b:v $VIDEO_BITRATE -pass 2 -c:a libopus -b:a 96k "$output_file"
