@@ -10,5 +10,5 @@ VIDEO_BITRATE="$(echo "$BITRATE - 96" | bc)k"
 
 PRESET=veryslow
 
-ffmpeg -y -i "$input_file" -vf scale=-1:1080 -c:v libx264 -b:v $VIDEO_BITRATE -preset $PRESET -pass 1 -vsync cfr -f null /dev/null && \
-ffmpeg -i "$input_file" -vf scale=-1:1080 -c:v libx264 -b:v $VIDEO_BITRATE -preset $PRESET -pass 2 -c:a aac -b:a 96k "$output_file"
+ffmpeg -y -i "$input_file" -vf scale=-1:1080 -c:v libx264 -b:v $VIDEO_BITRATE -preset $PRESET -movflags +faststart -pass 1 -vsync cfr -f null /dev/null && \
+ffmpeg -i "$input_file" -vf scale=-1:1080 -c:v libx264 -b:v $VIDEO_BITRATE -preset $PRESET -movflags +faststart -pass 2 -c:a aac -b:a 96k "$output_file"
